@@ -1,17 +1,55 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import { Dialog } from "@reach/dialog";
+import "@reach/dialog/styles.css";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import { Logo } from "./.components/logo";
+import { LoginForm, FormData } from "./.components/login-form";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+type DialogType = "register" | "login";
+
+const App = () => {
+  const [openModal, setOpenModal] = useState<DialogType | "none">("none");
+  const closeModal = () => setOpenModal("none");
+  const handleSubmit = (type: DialogType) => (formData: FormData) => {
+    console.log(type, formData);
+    closeModal();
+  };
+
+  return (
+    <div>
+      <Logo height="80" width="80" />
+      <h1>Bookshelf</h1>
+      <div>
+        <button onClick={() => setOpenModal("login")}>Login</button>
+      </div>
+      <div>
+        <button onClick={() => setOpenModal("register")}>Register</button>
+      </div>
+      <Dialog
+        isOpen={openModal === "login"}
+        onDismiss={closeModal}
+        aria-label="login form"
+      >
+        <h3>Login</h3>
+        <LoginForm onSubmit={handleSubmit("login")} buttonText="Login" />
+        <div>
+          <button onClick={() => closeModal()}>Close</button>
+        </div>
+      </Dialog>
+      <Dialog
+        isOpen={openModal === "register"}
+        onDismiss={closeModal}
+        aria-label="registration form"
+      >
+        <h3>Register</h3>
+        <LoginForm onSubmit={handleSubmit("register")} buttonText="Register" />
+        <div>
+          <button onClick={() => closeModal()}>Close</button>
+        </div>
+      </Dialog>
+    </div>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));
