@@ -1,53 +1,65 @@
-import React, { useState } from "react";
+/** @jsx jsx */
+import { jsx } from "@emotion/core";
+
 import ReactDOM from "react-dom";
-import { Dialog } from "@reach/dialog";
+import "./index.css";
 import "@reach/dialog/styles.css";
 
-import { Logo } from "./.components/logo";
-import { LoginForm, FormData } from "./.components/login-form";
+import { Logo } from "./components/logo";
+import { Button } from "./components/lib";
+import { LoginForm, FormData } from "./components/login-form";
+import { Modal, ModalContents, ModalOpenButton } from "./components/modal";
 
 type DialogType = "register" | "login";
 
 const App = () => {
-  const [openModal, setOpenModal] = useState<DialogType | "none">("none");
-  const closeModal = () => setOpenModal("none");
   const handleSubmit = (type: DialogType) => (formData: FormData) => {
     console.log(type, formData);
-    closeModal();
   };
 
   return (
-    <div>
+    <div
+      css={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100vh",
+      }}
+    >
       <Logo height="80" width="80" />
       <h1>Bookshelf</h1>
-      <div>
-        <button onClick={() => setOpenModal("login")}>Login</button>
-      </div>
-      <div>
-        <button onClick={() => setOpenModal("register")}>Register</button>
-      </div>
-      <Dialog
-        isOpen={openModal === "login"}
-        onDismiss={closeModal}
-        aria-label="login form"
+      <div
+        css={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gridGap: "0.75rem",
+        }}
       >
-        <h3>Login</h3>
-        <LoginForm onSubmit={handleSubmit("login")} buttonText="Login" />
-        <div>
-          <button onClick={() => closeModal()}>Close</button>
-        </div>
-      </Dialog>
-      <Dialog
-        isOpen={openModal === "register"}
-        onDismiss={closeModal}
-        aria-label="registration form"
-      >
-        <h3>Register</h3>
-        <LoginForm onSubmit={handleSubmit("register")} buttonText="Register" />
-        <div>
-          <button onClick={() => closeModal()}>Close</button>
-        </div>
-      </Dialog>
+        <Modal>
+          <ModalOpenButton>
+            <Button variant="primary">Login</Button>
+          </ModalOpenButton>
+          <ModalContents aria-label="Login form" title="Login">
+            <LoginForm
+              onSubmit={handleSubmit("login")}
+              submitButton={<Button variant="primary">Login</Button>}
+            />
+          </ModalContents>
+        </Modal>
+        <Modal>
+          <ModalOpenButton>
+            <Button variant="secondary">Register</Button>
+          </ModalOpenButton>
+          <ModalContents aria-label="Registration form" title="Register">
+            <LoginForm
+              onSubmit={handleSubmit("register")}
+              submitButton={<Button variant="secondary">Register</Button>}
+            />
+          </ModalContents>
+        </Modal>
+      </div>
     </div>
   );
 };
