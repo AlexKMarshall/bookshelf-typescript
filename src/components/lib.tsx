@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from "@emotion/styled/macro";
 import "@reach/dialog/styles.css";
 import { Dialog as ReachDialog } from "@reach/dialog";
 

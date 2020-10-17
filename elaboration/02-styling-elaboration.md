@@ -36,3 +36,7 @@ Typical use for cloneElement is to add extra props to a child or children passed
 ## Typescript Eslint bug with tuples
 
 Currently specifying a type as an explicit tuple causes eslint to complain with a cannot read property map of undefined error. This is because of changes in TS that eslint/ts-parser hasn't yet sorted out. As a workaround, use objects rather than tuples (in my case here, converting the useState tuple to an object before passing to context value)
+
+## Emotion styled components display name
+
+If you use styled components, then the component name doesn't show up in the react dev tools, only the underlying element. To fix this, import @emotion/styled/macro that way, the name of the styled component will apear in the React Component tree. N.B the component display name property is what shows up there, so if you really want to you can modify it manually, but not sure why you would
