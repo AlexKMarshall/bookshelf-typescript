@@ -72,16 +72,16 @@ const AnimatedDialogOverlay = animated(DialogOverlay);
 const ModalContentBase: React.FC<DialogProps> = (props) => {
   const { isOpen, setIsOpen } = useModalContext();
   const transitions = useTransition(isOpen, null, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: { opacity: 0, transform: "scale(0)" },
+    enter: { opacity: 1, transform: "scale(1)" },
+    leave: { opacity: 0, transform: "scale(0)" },
   });
 
   return (
     <React.Fragment>
       {transitions.map(({ item, key, props: styles }) =>
         item ? (
-          <AnimatedDialogOverlay style={{ ...styles }}>
+          <AnimatedDialogOverlay style={{ opacity: styles.opacity }}>
             <AnimatedDialogContent
               onDismiss={() => setIsOpen(false)}
               {...props}
