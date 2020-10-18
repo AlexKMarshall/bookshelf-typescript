@@ -11,9 +11,9 @@ style, and variable style together, based on multiple props
 If you're just styling a single component then a css prop is easiest To do that
 then you need to insert the following at the top of the file
 
-```
+```javascript
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from "@emotion/core";
 ```
 
 This is because it compiles to a special jsx factory function instead of
@@ -61,3 +61,11 @@ Create a usePrefersReducedMotion hook, which returns a boolean, and pass that to
 ## Chaining animations
 
 Can chain animations together by setting refs on each animation hook, and passing them in order to an array in useChain. To have them reverse order on exit, then you could reverse the array in a ternary based on some isOpen state value
+
+## Animation and composition
+
+It's easier to keep track of refs for orchestrated animations if all the hooks can be used in one top level component, and the animated props passed to the children directly, rather than having the child components define their own animation parameters
+
+## Transitions
+
+To get something that animates on mount and unmount, then we need to use useTransition. The result of that is an array that has to be mapped. If you're running it on a boolean value such as isOpen, then you might need to have a ternary in that map that does `item ? <Component /> : null`. Where item is the boolean isOpen. In that case though, the transition array will be `[true, false]` so even though only one of those results in a component loading, we still need to provide a key, as it's an array. So we can wrap the mapped output in a Fragment, and pass the fragment a key, and React should be happy
