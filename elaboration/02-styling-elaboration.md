@@ -40,3 +40,16 @@ Currently specifying a type as an explicit tuple causes eslint to complain with 
 ## Emotion styled components display name
 
 If you use styled components, then the component name doesn't show up in the react dev tools, only the underlying element. To fix this, import @emotion/styled/macro that way, the name of the styled component will apear in the React Component tree. N.B the component display name property is what shows up there, so if you really want to you can modify it manually, but not sure why you would
+
+## Providing an accessible label
+
+If we create an svg icon, we need to provide some kind of aria-label for instance "loading". We shouldn't rely on the users of our components adding this, so set a default for them. In this case, where we are rendering an animated version of the icon, first we grab the type of the icon (or its props) and create a wrapper component typed to have those props. Then we can destructure off the prop we want to default, and give it a default value, then pass that, and the ...props to the underlying icon
+
+## Destructuring aria props
+
+You can't destructure a prop with a hyphen. All the aria props have hyphens. So you have to alias them to something else first, e.g.
+
+```
+const {'aria-label': ariaLabel = "loading"} = props;
+return <Icon aria-label={ariaLabel} {...props} />
+```

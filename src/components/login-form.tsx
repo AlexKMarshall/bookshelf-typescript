@@ -2,7 +2,7 @@
 import { jsx } from "@emotion/core";
 
 import React, { useState } from "react";
-import { FormGroup, Input } from "./lib";
+import { FormGroup, Input, Spinner } from "./lib";
 
 type PropTypes = {
   onSubmit: (formData: FormData) => void;
@@ -64,7 +64,10 @@ const LoginForm = ({ onSubmit, submitButton }: PropTypes) => {
           onChange={handleChange}
         />
       </FormGroup>
-      <div>{React.cloneElement(submitButton, { type: "submit" })}</div>
+      <div>
+        {React.cloneElement(submitButton, { type: "submit" })}
+        <Spinner />
+      </div>
     </form>
   );
 };

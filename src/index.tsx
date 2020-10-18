@@ -3,7 +3,6 @@ import { jsx } from "@emotion/core";
 
 import ReactDOM from "react-dom";
 import "./index.css";
-import "@reach/dialog/styles.css";
 
 import { Logo } from "components/logo";
 import { Button } from "components/lib";

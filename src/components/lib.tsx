@@ -1,6 +1,10 @@
+import React from "react";
 import styled from "@emotion/styled/macro";
+import { keyframes } from "@emotion/core";
 import "@reach/dialog/styles.css";
 import { Dialog as ReachDialog } from "@reach/dialog";
+import { IconType } from "react-icons";
+import { FaSpinner } from "react-icons/fa";
 import * as colors from "styles/colors";
 import * as mq from "styles/media-queries";
 
@@ -68,4 +72,23 @@ const Dialog = styled(ReachDialog)({
   },
 });
 
-export { Button, CircleButton, Input, FormGroup, Dialog };
+const spin = keyframes({
+  from: {
+    transform: "rotate(0deg)",
+  },
+  to: {
+    transform: "rotate(359deg)",
+  },
+});
+
+const Spinner: IconType = ({
+  "aria-label": ariaLabel = "loading",
+  ...props
+}) => {
+  const AnimatedSpinner = styled(FaSpinner)({
+    animation: `${spin} 1s linear infinite`,
+  });
+  return <AnimatedSpinner aria-label={ariaLabel} {...props} />;
+};
+
+export { Button, CircleButton, Input, FormGroup, Dialog, Spinner };
