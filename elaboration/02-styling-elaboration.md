@@ -53,3 +53,11 @@ You can't destructure a prop with a hyphen. All the aria props have hyphens. So 
 const {'aria-label': ariaLabel = "loading"} = props;
 return <Icon aria-label={ariaLabel} {...props} />
 ```
+
+## Animating with react-spring
+
+Create a usePrefersReducedMotion hook, which returns a boolean, and pass that to the immediate prop whenever using a react-spring hook. This makes the animations run instantly if the user has set preference to no animations. Also might be useful for testing purposes, to make them run instantly
+
+## Chaining animations
+
+Can chain animations together by setting refs on each animation hook, and passing them in order to an array in useChain. To have them reverse order on exit, then you could reverse the array in a ternary based on some isOpen state value

@@ -67,20 +67,22 @@ const ModalOpenButton: React.FC = ({ children: child }) => {
   });
 };
 
-const AnimatedDialogContent = animated(DialogContent);
+const AnimatedDialogContentContainer = animated(DialogContent);
 const AnimatedDialogOverlay = animated(DialogOverlay);
 
-const ModalContentBase: React.FC<DialogProps> = ({ style, ...props }) => {
-  const { setIsOpen } = useModalContext();
-  return (
-    <AnimatedDialogOverlay
-      style={{ opacity: style?.opacity }}
-      onDismiss={() => setIsOpen(false)}
-    >
-      <AnimatedDialogContent {...props} style={style} />
-    </AnimatedDialogOverlay>
-  );
-};
+const ModalDefaultContent = ({ title }: { title: string }) => (
+  <React.Fragment>
+    <div css={{ display: "flex", justifyContent: "flex-end" }}>
+      <ModalDismissButton>
+        <CircleButton>
+          <VisuallyHidden>Close</VisuallyHidden>
+          <span aria-hidden>×</span>
+        </CircleButton>
+      </ModalDismissButton>
+    </div>
+    <h3 css={{ textAlign: "center", fontSize: "2rem" }}>{title}</h3>
+  </React.Fragment>
+);
 
 type ModalContentsProps = { title: string } & DialogProps;
 
@@ -89,7 +91,7 @@ const ModalContents: React.FC<ModalContentsProps> = ({
   children,
   ...props
 }) => {
-  const { isOpen } = useModalContext();
+  const { isOpen, setIsOpen } = useModalContext();
   const prefersReducedMotion = usePrefersReducedMotion();
   const containerRef = useRef<any>();
   const contentsRef = useRef<any>();
@@ -107,7 +109,7 @@ const ModalContents: React.FC<ModalContentsProps> = ({
     ref: containerRef,
   });
 
-  const springProps = useSpring({
+  const spring = useSpring({
     opacity: isOpen ? 1 : 0,
     config: {
       duration: 200,
@@ -122,20 +124,17 @@ const ModalContents: React.FC<ModalContentsProps> = ({
       {transitions.map(({ item, key, props: styles }) => (
         <React.Fragment key={key}>
           {item ? (
-            <ModalContentBase {...props} style={styles}>
-              <animated.div style={springProps}>
-                <div css={{ display: "flex", justifyContent: "flex-end" }}>
-                  <ModalDismissButton>
-                    <CircleButton>
-                      <VisuallyHidden>Close</VisuallyHidden>
-                      <span aria-hidden>×</span>
-                    </CircleButton>
-                  </ModalDismissButton>
-                </div>
-                <h3 css={{ textAlign: "center", fontSize: "2rem" }}>{title}</h3>
-                {children}
-              </animated.div>
-            </ModalContentBase>
+            <AnimatedDialogOverlay
+              style={{ opacity: styles.opacity }}
+              onDismiss={() => setIsOpen(false)}
+            >
+              <AnimatedDialogContentContainer {...props} style={styles}>
+                <animated.div style={spring}>
+                  <ModalDefaultContent title={title} />
+                  {children}
+                </animated.div>
+              </AnimatedDialogContentContainer>
+            </AnimatedDialogOverlay>
           ) : null}
         </React.Fragment>
       ))}
