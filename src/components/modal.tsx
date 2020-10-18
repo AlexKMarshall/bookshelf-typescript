@@ -1,12 +1,13 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 
-import React, { useContext, useState } from "react";
-import { useTransition, animated } from "react-spring";
+import React, { useContext, useRef, useState } from "react";
+import { useTransition, animated, useSpring, useChain } from "react-spring";
 
 import { DialogProps, DialogOverlay } from "@reach/dialog";
 import VisuallyHidden from "@reach/visually-hidden";
 import { CircleButton, DialogContent } from "./lib";
+import { usePrefersReducedMotion } from "hooks/prefers-reduced-motion";
 
 type CallbackType = (...args: any[]) => void;
 
@@ -69,32 +70,15 @@ const ModalOpenButton: React.FC = ({ children: child }) => {
 const AnimatedDialogContent = animated(DialogContent);
 const AnimatedDialogOverlay = animated(DialogOverlay);
 
-const ModalContentBase: React.FC<DialogProps> = (props) => {
-  const { isOpen, setIsOpen } = useModalContext();
-  const transitions = useTransition(isOpen, String(isOpen), {
-    from: {
-      opacity: 0,
-      transform: "scale(0)",
-    },
-    enter: { opacity: 1, transform: "scale(1)" },
-    leave: { opacity: 0, transform: "scale(0)" },
-  });
-
+const ModalContentBase: React.FC<DialogProps> = ({ style, ...props }) => {
+  const { setIsOpen } = useModalContext();
   return (
-    <React.Fragment>
-      {transitions.map(({ item, key, props: styles }) => (
-        <React.Fragment key={key}>
-          {item ? (
-            <AnimatedDialogOverlay
-              style={{ opacity: styles.opacity }}
-              onDismiss={() => setIsOpen(false)}
-            >
-              <AnimatedDialogContent {...props} style={{ ...styles }} />
-            </AnimatedDialogOverlay>
-          ) : null}
-        </React.Fragment>
-      ))}
-    </React.Fragment>
+    <AnimatedDialogOverlay
+      style={{ opacity: style?.opacity }}
+      onDismiss={() => setIsOpen(false)}
+    >
+      <AnimatedDialogContent {...props} style={style} />
+    </AnimatedDialogOverlay>
   );
 };
 
@@ -105,19 +89,57 @@ const ModalContents: React.FC<ModalContentsProps> = ({
   children,
   ...props
 }) => {
+  const { isOpen } = useModalContext();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const containerRef = useRef<any>();
+  const contentsRef = useRef<any>();
+  const transitions = useTransition(isOpen, null, {
+    from: {
+      opacity: 0,
+      transform: "scale(0)",
+    },
+    enter: { opacity: 1, transform: "scale(1)" },
+    leave: { opacity: 0, transform: "scale(0)" },
+    immediate: prefersReducedMotion,
+    config: {
+      tension: 300,
+    },
+    ref: containerRef,
+  });
+
+  const springProps = useSpring({
+    opacity: isOpen ? 1 : 0,
+    config: {
+      duration: 200,
+    },
+    ref: contentsRef,
+  });
+
+  useChain(isOpen ? [containerRef, contentsRef] : [contentsRef, containerRef]);
+
   return (
-    <ModalContentBase {...props}>
-      <div css={{ display: "flex", justifyContent: "flex-end" }}>
-        <ModalDismissButton>
-          <CircleButton>
-            <VisuallyHidden>Close</VisuallyHidden>
-            <span aria-hidden>×</span>
-          </CircleButton>
-        </ModalDismissButton>
-      </div>
-      <h3 css={{ textAlign: "center", fontSize: "2rem" }}>{title}</h3>
-      {children}
-    </ModalContentBase>
+    <React.Fragment>
+      {transitions.map(({ item, key, props: styles }) => (
+        <React.Fragment key={key}>
+          {item ? (
+            <ModalContentBase {...props} style={styles}>
+              <animated.div style={springProps}>
+                <div css={{ display: "flex", justifyContent: "flex-end" }}>
+                  <ModalDismissButton>
+                    <CircleButton>
+                      <VisuallyHidden>Close</VisuallyHidden>
+                      <span aria-hidden>×</span>
+                    </CircleButton>
+                  </ModalDismissButton>
+                </div>
+                <h3 css={{ textAlign: "center", fontSize: "2rem" }}>{title}</h3>
+                {children}
+              </animated.div>
+            </ModalContentBase>
+          ) : null}
+        </React.Fragment>
+      ))}
+    </React.Fragment>
   );
 };
 
