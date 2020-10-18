@@ -1,10 +1,12 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import React, { useContext, useState } from "react";
 
-import { DialogProps } from "@reach/dialog";
+import React, { useContext, useState } from "react";
+import { useTransition, animated } from "react-spring";
+
+import { DialogProps, DialogOverlay } from "@reach/dialog";
 import VisuallyHidden from "@reach/visually-hidden";
-import { CircleButton, Dialog } from "./lib";
+import { CircleButton, DialogContent } from "./lib";
 
 type CallbackType = (...args: any[]) => void;
 
@@ -64,10 +66,31 @@ const ModalOpenButton: React.FC = ({ children: child }) => {
   });
 };
 
+const AnimatedDialogContent = animated(DialogContent);
+const AnimatedDialogOverlay = animated(DialogOverlay);
+
 const ModalContentBase: React.FC<DialogProps> = (props) => {
   const { isOpen, setIsOpen } = useModalContext();
+  const transitions = useTransition(isOpen, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+
   return (
-    <Dialog isOpen={isOpen} onDismiss={() => setIsOpen(false)} {...props} />
+    <React.Fragment>
+      {transitions.map(({ item, key, props: styles }) =>
+        item ? (
+          <AnimatedDialogOverlay style={{ ...styles }}>
+            <AnimatedDialogContent
+              onDismiss={() => setIsOpen(false)}
+              {...props}
+              style={{ ...styles }}
+            />
+          </AnimatedDialogOverlay>
+        ) : null
+      )}
+    </React.Fragment>
   );
 };
 

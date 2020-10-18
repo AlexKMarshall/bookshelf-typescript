@@ -2,7 +2,10 @@ import React from "react";
 import styled from "@emotion/styled/macro";
 import { keyframes } from "@emotion/core";
 import "@reach/dialog/styles.css";
-import { Dialog as ReachDialog } from "@reach/dialog";
+import {
+  Dialog as ReachDialog,
+  DialogContent as ReachDialogContent,
+} from "@reach/dialog";
 import { IconType } from "react-icons";
 import { FaSpinner } from "react-icons/fa";
 import * as colors from "styles/colors";
@@ -72,6 +75,18 @@ const Dialog = styled(ReachDialog)({
   },
 });
 
+const DialogContent = styled(ReachDialogContent)({
+  maxWidth: "450px",
+  borderRadius: "3px",
+  paddingBottom: "3.5em",
+  boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.2)",
+  margin: "20vh auto",
+  [mq.small]: {
+    width: "100%",
+    margin: "10vh auto",
+  },
+});
+
 const spin = keyframes({
   from: {
     transform: "rotate(0deg)",
@@ -91,4 +106,12 @@ const Spinner: IconType = ({
   return <AnimatedSpinner aria-label={ariaLabel} {...props} />;
 };
 
-export { Button, CircleButton, Input, FormGroup, Dialog, Spinner };
+export {
+  Button,
+  CircleButton,
+  Input,
+  FormGroup,
+  Dialog,
+  DialogContent,
+  Spinner,
+};
