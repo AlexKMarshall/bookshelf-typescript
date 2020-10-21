@@ -38,7 +38,7 @@ const Button = styled.button(
 
 const Input = styled.input({
   borderRadius: "3px",
-  border: `1px solid #f1f1f4 ${colors.gray10}`,
+  border: `1px solid ${colors.gray10}`,
   background: colors.gray10,
   padding: "8px 12px",
 });
@@ -106,6 +106,14 @@ const Spinner: IconType = ({
   return <AnimatedSpinner aria-label={ariaLabel} {...props} />;
 };
 
+const BookListUL = styled.ul({
+  listStyle: "none",
+  padding: "0",
+  display: "grid",
+  gridTemplateRows: "repeat(auto-fill, minmax(100px, 1fr))",
+  gridGap: "1em",
+});
+
 export {
   Button,
   CircleButton,
@@ -114,4 +122,5 @@ export {
   Dialog,
   DialogContent,
   Spinner,
+  BookListUL,
 };

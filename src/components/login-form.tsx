@@ -25,7 +25,7 @@ const LoginForm = ({ onSubmit, submitButton }: PropTypes) => {
     setFormState((oldState) => ({ ...oldState, [name]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     onSubmit({ username, password });
   };
