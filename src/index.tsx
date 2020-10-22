@@ -3,6 +3,6 @@ import { jsx } from "@emotion/core";
 
 import ReactDOM from "react-dom";
 import "./bootstrap";
-import { DiscoverBookScreen } from "./discover";
+import { App } from "./app";
 
-ReactDOM.render(<DiscoverBookScreen />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));

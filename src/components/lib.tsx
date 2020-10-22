@@ -43,11 +43,6 @@ const Input = styled.input({
   padding: "8px 12px",
 });
 
-const FormGroup = styled.div({
-  display: "flex",
-  flexDirection: "column",
-});
-
 const CircleButton = styled.button({
   borderRadius: "30px",
   padding: "0",
@@ -118,7 +113,6 @@ export {
   Button,
   CircleButton,
   Input,
-  FormGroup,
   Dialog,
   DialogContent,
   Spinner,

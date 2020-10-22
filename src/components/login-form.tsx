@@ -2,7 +2,8 @@
 import { jsx } from "@emotion/core";
 
 import React, { useState } from "react";
-import { FormGroup, Input, Spinner } from "./lib";
+import { Input, Spinner } from "./lib";
+import { Stack } from "components/layout";
 
 type PropTypes = {
   onSubmit: (formData: FormData) => void;
@@ -30,21 +31,11 @@ const LoginForm = ({ onSubmit, submitButton }: PropTypes) => {
     onSubmit({ username, password });
   };
 
+  const Form = Stack.withComponent("form");
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      css={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        "> div": {
-          margin: "10px auto",
-          width: "100%",
-          maxWidth: "300px",
-        },
-      }}
-    >
-      <FormGroup>
+    <Form onSubmit={handleSubmit}>
+      <InputGroup>
         <label htmlFor="username">Username</label>
         <Input
           type="text"
@@ -53,8 +44,8 @@ const LoginForm = ({ onSubmit, submitButton }: PropTypes) => {
           value={username}
           onChange={handleChange}
         />
-      </FormGroup>
-      <FormGroup>
+      </InputGroup>
+      <InputGroup>
         <label htmlFor="password">Password</label>
         <Input
           type="password"
@@ -63,13 +54,17 @@ const LoginForm = ({ onSubmit, submitButton }: PropTypes) => {
           value={password}
           onChange={handleChange}
         />
-      </FormGroup>
+      </InputGroup>
       <div>
         {React.cloneElement(submitButton, { type: "submit" })}
         <Spinner />
       </div>
-    </form>
+    </Form>
   );
 };
+
+const InputGroup: React.FC = ({ children }) => (
+  <Stack size={-2}>{children}</Stack>
+);
 
 export { LoginForm };
