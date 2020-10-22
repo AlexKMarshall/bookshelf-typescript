@@ -1,12 +1,14 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import styled from "@emotion/styled/macro";
 
 import React, { useContext, useRef, useState } from "react";
 import { useTransition, animated, useSpring, useChain } from "react-spring";
 
-import { DialogProps, DialogOverlay } from "@reach/dialog";
+import { DialogProps, DialogOverlay, DialogContent } from "@reach/dialog";
 import VisuallyHidden from "@reach/visually-hidden";
-import { CircleButton, DialogContent } from "./lib";
+import { CircleButton } from "./lib";
+import { Box, Cluster, Stack, Imposter } from "components/layout";
 import { usePrefersReducedMotion } from "hooks/prefers-reduced-motion";
 
 type CallbackType = (...args: any[]) => void;
@@ -67,20 +69,56 @@ const ModalOpenButton: React.FC = ({ children: child }) => {
   });
 };
 
-const AnimatedDialogContentContainer = animated(DialogContent);
+const StyledDialogContent: React.FC<DialogProps & { scale?: any }> = ({
+  children,
+  scale = 1,
+  ...props
+}) => {
+  const DialogContentCSSReset = styled(DialogContent)({
+    width: "unset",
+    margin: "unset",
+    background: "unset",
+    padding: "unset",
+    outline: "unset",
+  });
+
+  return (
+    <Imposter
+      style={{ ["--scaleX" as any]: scale, ["--scaleY" as any]: scale }}
+    >
+      <DialogContentCSSReset {...props}>
+        <Box
+          padding={2}
+          borderWidth={0}
+          css={{
+            borderRadius: "0.5rem",
+            boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.2)",
+            pointerEvents: "auto",
+          }}
+        >
+          {children}
+        </Box>
+      </DialogContentCSSReset>
+    </Imposter>
+  );
+};
+
+const AnimatedDialogContentContainer = animated(StyledDialogContent);
 const AnimatedDialogOverlay = animated(DialogOverlay);
 
 const ModalDefaultContent = ({ title }: { title: string }) => (
   <React.Fragment>
-    <div css={{ display: "flex", justifyContent: "flex-end" }}>
-      <ModalDismissButton>
-        <CircleButton>
-          <VisuallyHidden>Close</VisuallyHidden>
-          <span aria-hidden>×</span>
-        </CircleButton>
-      </ModalDismissButton>
-    </div>
-    <h3 css={{ textAlign: "center", fontSize: "2rem" }}>{title}</h3>
+    <Cluster justifyContent="flex-end">
+      <div>
+        <ModalDismissButton>
+          <CircleButton>
+            <VisuallyHidden>Close</VisuallyHidden>
+            <span aria-hidden>×</span>
+          </CircleButton>
+        </ModalDismissButton>
+      </div>
+    </Cluster>
+    <h3 css={{ textAlign: "center" }}>{title}</h3>
   </React.Fragment>
 );
 
@@ -98,10 +136,10 @@ const ModalContents: React.FC<ModalContentsProps> = ({
   const transitions = useTransition(isOpen, null, {
     from: {
       opacity: 0,
-      transform: "scale(0)",
+      scale: 0,
     },
-    enter: { opacity: 1, transform: "scale(1)" },
-    leave: { opacity: 0, transform: "scale(0)" },
+    enter: { opacity: 1, scale: 1 },
+    leave: { opacity: 0, scale: 0 },
     immediate: prefersReducedMotion,
     config: {
       tension: 300,
@@ -128,10 +166,12 @@ const ModalContents: React.FC<ModalContentsProps> = ({
               style={{ opacity: styles.opacity }}
               onDismiss={() => setIsOpen(false)}
             >
-              <AnimatedDialogContentContainer {...props} style={styles}>
+              <AnimatedDialogContentContainer {...props} scale={styles.scale}>
                 <animated.div style={spring}>
-                  <ModalDefaultContent title={title} />
-                  {children}
+                  <Stack>
+                    <ModalDefaultContent title={title} />
+                    {children}
+                  </Stack>
                 </animated.div>
               </AnimatedDialogContentContainer>
             </AnimatedDialogOverlay>

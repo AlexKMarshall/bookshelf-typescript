@@ -2,10 +2,7 @@ import React from "react";
 import styled from "@emotion/styled/macro";
 import { keyframes } from "@emotion/core";
 import "@reach/dialog/styles.css";
-import {
-  Dialog as ReachDialog,
-  DialogContent as ReachDialogContent,
-} from "@reach/dialog";
+import { DialogContent as ReachDialogContent } from "@reach/dialog";
 import { IconType } from "react-icons";
 import { FaSpinner } from "react-icons/fa";
 import * as colors from "styles/colors";
@@ -40,7 +37,7 @@ const Input = styled.input({
   borderRadius: "3px",
   border: `1px solid ${colors.gray10}`,
   background: colors.gray10,
-  padding: "8px 12px",
+  padding: "var(--s-1) var(--s1)",
 });
 
 const CircleButton = styled.button({
@@ -56,18 +53,6 @@ const CircleButton = styled.button({
   color: colors.text,
   border: `1px solid ${colors.gray10}`,
   cursor: "pointer",
-});
-
-const Dialog = styled(ReachDialog)({
-  maxWidth: "450px",
-  borderRadius: "3px",
-  paddingBottom: "3.5em",
-  boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.2)",
-  margin: "20vh auto",
-  [mq.small]: {
-    width: "100%",
-    margin: "10vh auto",
-  },
 });
 
 const DialogContent = styled(ReachDialogContent)({
@@ -109,12 +94,4 @@ const BookListUL = styled.ul({
   gridGap: "1em",
 });
 
-export {
-  Button,
-  CircleButton,
-  Input,
-  Dialog,
-  DialogContent,
-  Spinner,
-  BookListUL,
-};
+export { Button, CircleButton, Input, DialogContent, Spinner, BookListUL };
