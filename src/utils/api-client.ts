@@ -5,9 +5,7 @@ export type ErrorResponse = {
   message: string;
 };
 
-function client<ResponseType>(
-  endpoint: string
-): Promise<ResponseType | ErrorResponse> {
+function client<ResponseType>(endpoint: string): Promise<ResponseType> {
   if (!API_URL) {
     throw new Error("No API url specified in config!");
   }
@@ -19,7 +17,7 @@ function client<ResponseType>(
     if (response.ok) {
       return data as ResponseType;
     } else {
-      return Promise.reject(data as ErrorResponse);
+      return Promise.reject(data);
     }
   });
 }

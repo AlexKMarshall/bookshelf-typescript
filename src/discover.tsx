@@ -7,37 +7,21 @@ import Tooltip from "@reach/tooltip";
 import "@reach/tooltip/styles.css";
 import { useEffect, useState } from "react";
 import { BooksResponse } from "types/book";
-import { client, ErrorResponse } from "utils/api-client";
+import { client } from "utils/api-client";
 import * as colors from "styles/colors";
-
-type FetchStatus = "idle" | "pending" | "resolved" | "rejected";
+import { useAsync } from "hooks/async";
 
 const DiscoverBookScreen = () => {
-  const [data, setData] = useState<BooksResponse | null>(null);
-  const [status, setStatus] = useState<FetchStatus>("idle");
-  const [error, setError] = useState<ErrorResponse | null>(null);
+  const { isLoading, isSuccess, isError, run, data, error } = useAsync<
+    BooksResponse
+  >();
   const [query, setQuery] = useState("");
   const [queried, setQueried] = useState(false);
 
   useEffect(() => {
     if (!queried) return;
-    setStatus("pending");
-
-    client<BooksResponse>(`books?query=${encodeURI(query)}`)
-      .then((data) => {
-        if ("status" in data) {
-          throw new Error(
-            `Unexpected status field in data: ${JSON.stringify(data)}`
-          );
-        }
-        setData(data);
-        setStatus("resolved");
-      })
-      .catch((error) => {
-        setError(error);
-        setStatus("rejected");
-      });
-  }, [queried, query]);
+    run(client(`books?query=${encodeURI(query)}`));
+  }, [queried, query, run]);
 
   const handleSearchSubmit: React.FormEventHandler<HTMLFormElement> = (
     event
@@ -50,10 +34,6 @@ const DiscoverBookScreen = () => {
     setQueried(false);
     setQuery(event.target.value);
   };
-
-  const isLoading = status === "pending";
-  const isSuccess = status === "resolved";
-  const isError = status === "rejected";
 
   return (
     <div
@@ -99,7 +79,7 @@ const DiscoverBookScreen = () => {
       {isError ? (
         <div css={{ color: colors.danger }}>
           <p>There was an error:</p>
-          <pre>{error?.message}</pre>
+          <pre>{error.message}</pre>
         </div>
       ) : null}
 
